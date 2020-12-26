@@ -10,7 +10,7 @@ select * from dsmbootcamp.sample.summer_medals;
 DATASET_ADINIZ kısmına kendi dataset adınızı yazarak tabloyu create ettikten sonra, soru çözümünüzde bu yarattığınız tabloyu kullanabilirsiniz.
 
 ```SQL
-select * from `dsmbootcamp.sample.summer_medals` where athlete = 'ANGERER, Nadine'
+
 WITH medal_winners AS
 (
   SELECT
@@ -23,7 +23,7 @@ WITH medal_winners AS
     NTH_VALUE (year,1) OVER(PARTITION BY athlete ORDER BY year ROWS BETWEEN  1 PRECEDING AND 1 FOLLOWING) AS first_,
     NTH_VALUE (year,2) OVER(PARTITION BY athlete ORDER BY year DESC ROWS BETWEEN 1 PRECEDING and 1 FOLLOWING) AS second_,
     NTH_VALUE (year,3) OVER(PARTITION BY athlete ORDER BY year ROWS BETWEEN  1 PRECEDING AND 1 FOLLOWING) AS last_,
-  FROM `dsmbootcamp.sample.summer_medals`
+  FROM `dsmbootcamp.selcuk_akarin.summer_medals`
   WHERE medal IS NOT NULL AND year >= 1980 
   ORDER BY year DESC
 )
