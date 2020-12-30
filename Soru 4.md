@@ -55,7 +55,7 @@ limit 100;
 MERGE `dsmbootcamp.selcuk_akarin.content_category` t    -- merge kısmına tablo vermek zorundayız.
 USING `dsmbootcamp.selcuk_akarin.content_category_20201222_00_59`s    -- using'de kullanılan element sadece tablo olmak zorunda değil select de olabilir. yalnız on statement'ındaki alan unique olmalı.
 ON t.id = s.id
-WHEN MATCHED AND s.is_deleted = true THEN
+WHEN NOT MATCHED BY SOURCE THEN
   UPDATE SET 
     t.is_deleted = s.is_deleted
 WHEN MATCHED THEN
