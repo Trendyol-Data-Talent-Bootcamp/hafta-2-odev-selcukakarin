@@ -53,11 +53,11 @@ limit 100;
 ```SQL
 -- merge sistemi sadece target tablo üzerinde işlem yapmayı sağlıyor, source tablo üzerinde işlem yaptırmıyor.
 MERGE `dsmbootcamp.selcuk_akarin.content_category` t    -- merge kısmına tablo vermek zorundayız.
-USING `dsmbootcamp.selcuk_akarin.content_category_20201222_00_59`s    -- using'de kullanılan element sadece tablo olmak zorunda değil select de olabilir. yalnız on statement'ındaki alan unique olmalı.
+USING `dsmbootcamp.selcuk_akarin.content_category_20201222_00_59` s    -- using'de kullanılan element sadece tablo olmak zorunda değil select de olabilir. yalnız on statement'ındaki alan unique olmalı.
 ON t.id = s.id
 WHEN NOT MATCHED BY SOURCE THEN
   UPDATE SET 
-    t.is_deleted = s.is_deleted
+    t.is_deleted = true
 WHEN MATCHED THEN
   UPDATE SET 
     t.cdc_date = s.cdc_date,
@@ -76,7 +76,4 @@ WHEN NOT MATCHED BY TARGET THEN
     s.id,
     s.category)
     
-CREATE OR REPLACE TABLE `dsmbootcamp.selcuk_akarin.content_category`
-AS
-SELECT * FROM `dsmbootcamp.selcuk_akarin.content_category_target`;
 ```
