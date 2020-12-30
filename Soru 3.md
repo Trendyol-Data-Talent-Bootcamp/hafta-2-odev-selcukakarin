@@ -57,7 +57,10 @@ hll_count.init, hll_count.merge, hll_count.merge_partial, hll_count.extract kull
 
 https://cloud.google.com/bigquery/docs/reference/standard-sql/hll_functions
 
+[kodun son versiyonunun asıl sahibi Faruk Aşçı](https://github.com/Trendyol-Data-Talent-Bootcamp/hafta-2-odev-FarukAsci/blob/main/Soru%203.md)
+
 ```SQL
+-- eski
 SELECT time,
 SUM(device_count) OVER(ORDER BY time ASC ROWS BETWEEN 4 PRECEDING and CURRENT ROW) AS distinct_user
 FROM(
@@ -67,4 +70,33 @@ FROM selcuk_akarin.pageview
 GROUP BY time
 ORDER BY time ASC
 )
+-- yeni
+with hyper_count as(
+SELECT * FROM(
+SELECT FORMAT_TIME("%R", EXTRACT(TIME FROM view_ts)) AS time_min, HLL_COUNT.init(deviceid) users
+FROM selcuk_akarin.pageview
+GROUP BY time_min)
+ORDER BY time_min), 
+
+five_minute_window AS (
+  SELECT
+    time_min,
+    ARRAY_AGG(users) OVER (ROWS BETWEEN 4 PRECEDING AND CURRENT ROW) five_minute_users
+  FROM hyper_count)
+  
+SELECT
+  time_min,(
+  SELECT
+    HLL_COUNT.merge(users)
+  FROM
+    UNNEST(five_minute_users) users) user_count
+FROM
+  five_minute_window
+ORDER BY
+  time_min;
+  
+-- lets try  
+SELECT count(distinct(deviceid))
+FROM selcuk_akarin.pageview
+where timestamp_trunc(view_ts,minute) between '2020-03-03 23:55:00 UTC' and '2020-03-03 23:59:00 UTC'
 ```
